@@ -200,15 +200,19 @@ def generator_loss(fake_output):
 # define optimizer for both the generator and discriminator: use adam
 generator_optimizer = tf.keras.optimizers.Adam(1e-4)
 discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
-# %%
-# check points:
-checkpoint_dir = 'checkpoints_1.ckpt'
+
+
+
+#%%
+checkpoint_dir = './training_checkpoints'
+checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
 checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  discriminator_optimizer=discriminator_optimizer,
                                  generator=generator,
+   
                                  discriminator=discriminator)
+#%%
 
-# %%
 # epochs and batch_size
 n_epochs = 10
 batch_size = 32
@@ -259,6 +263,9 @@ for epoch in range(n_epochs):
     for i in iter(ds):
 
         gen_loss, disc_loss = train(i)
+        if (epoch + 1) % 30 == 0:
+        
+            checkpoint.save(file_prefix = checkpoint_prefix)
 
         if count % 50 == 0:
             print("%d of %d step" % (count, N_step))
